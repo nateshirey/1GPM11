@@ -524,8 +524,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   needleRb: {fileID: 620753059}
+  pulledBack: 0
   maxPullbackMagnitude: 1
+  pullbackAmount: 0
+  previousPullbackAmount: 0
   throwAngle: 0
+  mouseNormalizeRadius: 0.2
+  mousePos: {x: 0, y: 0}
 --- !u!1 &768021510
 GameObject:
   m_ObjectHideFlags: 0

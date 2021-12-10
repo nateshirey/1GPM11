@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class Needle : MonoBehaviour
 {
     public Rigidbody needleRb;
+    private Camera cam;
 
     private Vector2 inputValue;
     public bool pulledBack = false;
@@ -14,11 +15,41 @@ public class Needle : MonoBehaviour
     public float pullbackAmount = 0;
     public float previousPullbackAmount = 0;
     public float throwAngle;
+    [Range(0.1f, 0.5f)]
+    public float mouseNormalizeRadius = 0.2f;
+    private float mouseNormalRatio;
+
+    public Vector2 mousePos;
+
+    private void Awake()
+    {
+        cam = Camera.main;
+        mouseNormalRatio = 1f / mouseNormalizeRadius;
+    }
 
     public void OnPullback(InputValue value)
     {
         inputValue = value.Get<Vector2>();
         pulledBack = inputValue.magnitude > 0 ? true : false;
+    }
+
+    public void OnMousePosition(InputValue value)
+    {
+        mousePos = value.Get<Vector2>();
+        Vector2 playerPos = cam.WorldToScreenPoint(this.transform.position);
+        mousePos -= playerPos;
+        mousePos /= cam.scaledPixelWidth;
+        mousePos.y *= cam.aspect;
+
+        mousePos *= mouseNormalRatio;
+        mousePos = Vector2.ClampMagnitude(mousePos, 1f);
+
+        inputValue = mousePos;
+    }
+
+    public void OnMouseClick(InputValue value)
+    {
+        pulledBack = value.isPressed ? true : false;
     }
 
     private void FixedUpdate()
