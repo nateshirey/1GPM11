@@ -173,7 +173,7 @@ MonoBehaviour:
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_StandbyUpdate: 2
-  m_LookAt: {fileID: 756177404}
+  m_LookAt: {fileID: 620753055}
   m_Follow: {fileID: 756177404}
   m_Lens:
     FieldOfView: 40
@@ -525,6 +525,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   needleRb: {fileID: 620753059}
   pulledBack: 0
+  throwStrength: 10
+  canThrow: 0
   maxPullbackMagnitude: 1
   pullbackAmount: 0
   previousPullbackAmount: 0

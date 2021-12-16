@@ -34,8 +34,17 @@
                 },
                 {
                     "name": "MouseClick",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "07b63ac1-a384-45d5-97c8-43f4521319f4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Retreive",
+                    "type": "Button",
+                    "id": "acc0ae7f-1ec7-4f8c-b589-ec546fcc7e1e",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -117,6 +126,17 @@
                     "processors": "",
                     "groups": "Keyboard",
                     "action": "MouseClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ba580c8e-8452-415f-b39a-e61387381a34",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Retreive",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
