@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public enum NeedleState { Held, Thrown, Hit}
 
-public class Needle : MonoBehaviour
+public class NeedleInput : MonoBehaviour
 {
-    public Rigidbody needleRb;
     private Camera cam;
+
+    public NeedleCollision needleCollision;
 
     private Vector2 inputValue;
     public bool pulledBack = false;
-    private NeedleState needleState;
 
     [Range(0.5f, 10f)]
     public float throwStrength = 1f;
@@ -33,7 +32,6 @@ public class Needle : MonoBehaviour
     {
         cam = Camera.main;
         mouseNormalRatio = 1f / mouseNormalizeRadius;
-        needleState = NeedleState.Held;
     }
 
     //only used for controller input
@@ -69,13 +67,14 @@ public class Needle : MonoBehaviour
         //should only be called the frame that the click is released
         else if (canThrow)
         {
-            ThrowNeedle();
+            canThrow = false;
+            needleCollision.ThrowNeedle(throwStrength);
         }
     }
 
     private void FixedUpdate()
     {
-        switch (needleState)
+        switch (needleCollision.needleState)
         {
             case NeedleState.Held:
                 PointNeedle();
@@ -93,16 +92,6 @@ public class Needle : MonoBehaviour
         }
     }
 
-    private void ThrowNeedle()
-    {
-        canThrow = false;
-        needleState = NeedleState.Thrown;
-
-        Vector3 throwVector = needleRb.gameObject.transform.right;
-        needleRb.AddForce(throwVector * throwStrength, ForceMode.Impulse);
-        Debug.Log("Throw");
-    }
-
     private void PointNeedle()
     {
         throwAngle = Mathf.Atan2(inputValue.y, inputValue.x);
@@ -112,7 +101,7 @@ public class Needle : MonoBehaviour
             throwAngle = 360 + throwAngle;
         }
         Quaternion rotation = Quaternion.Euler(0, 0, throwAngle - 180f);
-        needleRb.gameObject.transform.rotation = rotation;
+        needleCollision.gameObject.transform.rotation = rotation;
     }
 
     private void PositionNeedle()
@@ -131,6 +120,6 @@ public class Needle : MonoBehaviour
             position += new Vector3(clampedPos.x * pullbackAmount * maxPullbackMagnitude, clampedPos.y * pullbackAmount * maxPullbackMagnitude, 0);
 
         }
-        needleRb.gameObject.transform.position = position;
+        needleCollision.gameObject.transform.position = position;
     }
 }
