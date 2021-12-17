@@ -64,13 +64,13 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Retreive"",
-                    ""type"": ""Button"",
+                    ""name"": ""Retrieve"",
+                    ""type"": ""Value"",
                     ""id"": ""acc0ae7f-1ec7-4f8c-b589-ec546fcc7e1e"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -158,7 +158,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""Retreive"",
+                    ""action"": ""Retrieve"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -201,7 +201,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_PlayerActions_Pullback = m_PlayerActions.FindAction("Pullback", throwIfNotFound: true);
         m_PlayerActions_MousePosition = m_PlayerActions.FindAction("MousePosition", throwIfNotFound: true);
         m_PlayerActions_MouseClick = m_PlayerActions.FindAction("MouseClick", throwIfNotFound: true);
-        m_PlayerActions_Retreive = m_PlayerActions.FindAction("Retreive", throwIfNotFound: true);
+        m_PlayerActions_Retrieve = m_PlayerActions.FindAction("Retrieve", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -265,7 +265,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerActions_Pullback;
     private readonly InputAction m_PlayerActions_MousePosition;
     private readonly InputAction m_PlayerActions_MouseClick;
-    private readonly InputAction m_PlayerActions_Retreive;
+    private readonly InputAction m_PlayerActions_Retrieve;
     public struct PlayerActionsActions
     {
         private @PlayerControls m_Wrapper;
@@ -274,7 +274,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @Pullback => m_Wrapper.m_PlayerActions_Pullback;
         public InputAction @MousePosition => m_Wrapper.m_PlayerActions_MousePosition;
         public InputAction @MouseClick => m_Wrapper.m_PlayerActions_MouseClick;
-        public InputAction @Retreive => m_Wrapper.m_PlayerActions_Retreive;
+        public InputAction @Retrieve => m_Wrapper.m_PlayerActions_Retrieve;
         public InputActionMap Get() { return m_Wrapper.m_PlayerActions; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -296,9 +296,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @MouseClick.started -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnMouseClick;
                 @MouseClick.performed -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnMouseClick;
                 @MouseClick.canceled -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnMouseClick;
-                @Retreive.started -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnRetreive;
-                @Retreive.performed -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnRetreive;
-                @Retreive.canceled -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnRetreive;
+                @Retrieve.started -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnRetrieve;
+                @Retrieve.performed -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnRetrieve;
+                @Retrieve.canceled -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnRetrieve;
             }
             m_Wrapper.m_PlayerActionsActionsCallbackInterface = instance;
             if (instance != null)
@@ -315,9 +315,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @MouseClick.started += instance.OnMouseClick;
                 @MouseClick.performed += instance.OnMouseClick;
                 @MouseClick.canceled += instance.OnMouseClick;
-                @Retreive.started += instance.OnRetreive;
-                @Retreive.performed += instance.OnRetreive;
-                @Retreive.canceled += instance.OnRetreive;
+                @Retrieve.started += instance.OnRetrieve;
+                @Retrieve.performed += instance.OnRetrieve;
+                @Retrieve.canceled += instance.OnRetrieve;
             }
         }
     }
@@ -346,6 +346,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnPullback(InputAction.CallbackContext context);
         void OnMousePosition(InputAction.CallbackContext context);
         void OnMouseClick(InputAction.CallbackContext context);
-        void OnRetreive(InputAction.CallbackContext context);
+        void OnRetrieve(InputAction.CallbackContext context);
     }
 }

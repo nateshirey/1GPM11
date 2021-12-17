@@ -42,13 +42,13 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Retreive",
-                    "type": "Button",
+                    "name": "Retrieve",
+                    "type": "Value",
                     "id": "acc0ae7f-1ec7-4f8c-b589-ec546fcc7e1e",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -136,7 +136,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
-                    "action": "Retreive",
+                    "action": "Retrieve",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

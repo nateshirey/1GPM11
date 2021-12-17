@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - SewableWall
+  - SewableEntity
   layers:
   - Default
   - TransparentFX

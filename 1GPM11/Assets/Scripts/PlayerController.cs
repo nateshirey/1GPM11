@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
 
     [Header("Player Movement Values")]
-    [Range(1, 20)]
+    [Range(5, 50)]
     public float acceleration = 10f;
     [Range(0, 0.99f)]
     public float decceleration = 0.95f;
