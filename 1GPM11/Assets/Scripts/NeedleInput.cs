@@ -109,9 +109,6 @@ public class NeedleInput : MonoBehaviour
             case NeedleState.HitWall:
                 break;
 
-            case NeedleState.HitEntity:
-                break;
-
             case NeedleState.Returning:
                 ReturnNeedle();
                 break;

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum NeedleState { Held, Thrown, HitWall, HitEntity, Returning }
+public enum NeedleState { Held, Thrown, HitWall, Returning }
 
 public class NeedleCollision : MonoBehaviour
 {
@@ -12,7 +12,7 @@ public class NeedleCollision : MonoBehaviour
 
     private Vector3 sewPosition = Vector3.zero;
 
-    private List<Rigidbody> hitEntities = new List<Rigidbody>();
+    private List<SewableEntity> hitEntities = new List<SewableEntity>();
 
     private void Awake()
     {
@@ -34,6 +34,10 @@ public class NeedleCollision : MonoBehaviour
     public void StartReturn()
     {
         StopNeedle();
+        if(needleState == NeedleState.HitWall)
+        {
+            SewEntities();
+        }
         needleState = NeedleState.Returning;
     }
 
@@ -50,9 +54,10 @@ public class NeedleCollision : MonoBehaviour
             }
             else if (other.gameObject.CompareTag("SewableEntity"))
             {
-                needleState = NeedleState.HitEntity;
-                hitEntities.Add(other.attachedRigidbody);
-                //do stuff like notify the entity that this is the needle that got them
+                if(other.TryGetComponent<SewableEntity>(out SewableEntity entity))
+                {
+                    hitEntities.Add(entity);
+                }
             }
             else
             {
@@ -65,6 +70,14 @@ public class NeedleCollision : MonoBehaviour
     {
         rb.isKinematic = true;
         rb.velocity = Vector3.zero;
+    }
+
+    private void SewEntities()
+    {
+        foreach (SewableEntity e in hitEntities)
+        {
+            e.Sew(sewPosition);
+        }
     }
 
     private void OnDrawGizmos()
