@@ -89,7 +89,7 @@ public class NeedleInput : MonoBehaviour
             else if (canThrow)
             {
                 canThrow = false;
-                needleCollision.ThrowNeedle(throwStrength);
+                needleCollision.ThrowNeedle(throwStrength, this.transform.position);
             }
         }
     }

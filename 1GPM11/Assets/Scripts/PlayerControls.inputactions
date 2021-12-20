@@ -15,6 +15,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "Jump",
+                    "type": "Value",
+                    "id": "08763a8f-0f42-4d10-a66a-e535ae2b361a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Pullback",
                     "type": "Value",
                     "id": "15b4f0bf-49d1-40e9-aad2-d6c7e2e547a9",
@@ -137,6 +146,17 @@
                     "processors": "",
                     "groups": "Keyboard",
                     "action": "Retrieve",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "93871fc8-6c12-4025-9596-40e5ee1aaca3",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

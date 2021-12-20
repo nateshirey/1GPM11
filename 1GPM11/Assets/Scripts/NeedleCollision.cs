@@ -10,6 +10,7 @@ public class NeedleCollision : MonoBehaviour
     public NeedleState needleState;
     public Transform needleTip;
 
+    private Vector3 anchorPosition;
     private Vector3 sewPosition = Vector3.zero;
 
     private List<SewableEntity> hitEntities = new List<SewableEntity>();
@@ -21,7 +22,7 @@ public class NeedleCollision : MonoBehaviour
         hitEntities.Clear();
     }
 
-    public void ThrowNeedle(float throwStrength)
+    public void ThrowNeedle(float throwStrength, Vector3 anchorPos)
     {
         needleState = NeedleState.Thrown;
         rb.isKinematic = false;
@@ -78,6 +79,8 @@ public class NeedleCollision : MonoBehaviour
         {
             e.Sew(sewPosition);
         }
+
+        hitEntities.Clear();
     }
 
     private void OnDrawGizmos()

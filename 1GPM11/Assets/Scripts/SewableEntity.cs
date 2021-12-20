@@ -19,6 +19,16 @@ public class SewableEntity : MonoBehaviour
         StartCoroutine(SewCoroutine(SewPosition));
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        //maybe change this to a layer mask
+        if (collision.gameObject.CompareTag("SewableWall") && anchored)
+        {
+            StopAllCoroutines();
+            rb.isKinematic = true;
+        }
+    }
+
     private IEnumerator SewCoroutine(Vector3 SewPosition)
     {
         while(this.transform.position != SewPosition)
@@ -26,6 +36,8 @@ public class SewableEntity : MonoBehaviour
             Vector3 nextPosition = Vector3.MoveTowards(transform.position,
                                                        SewPosition,
                                                        Time.deltaTime * 5f);
+
+
             transform.position = nextPosition;
             yield return null;
         }
