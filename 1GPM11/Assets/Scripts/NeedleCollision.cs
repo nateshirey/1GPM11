@@ -10,6 +10,8 @@ public class NeedleCollision : MonoBehaviour
     public NeedleState needleState;
     public Transform needleTip;
 
+    private ThreadController threadController;
+
     private Vector3 anchorPosition;
     private Vector3 sewPosition = Vector3.zero;
 
@@ -20,12 +22,22 @@ public class NeedleCollision : MonoBehaviour
         rb = this.GetComponent<Rigidbody>();
         needleState = NeedleState.Held;
         hitEntities.Clear();
+
+        if(this.TryGetComponent<ThreadController>(out ThreadController tController))
+        {
+            threadController = tController;
+        }
     }
 
     public void ThrowNeedle(float throwStrength, Vector3 anchorPos)
     {
         needleState = NeedleState.Thrown;
         rb.isKinematic = false;
+
+        if(threadController != null)
+        {
+            threadController.SetUpThread(needleTip.transform, anchorPos);
+        }
 
         Vector3 throwVector = rb.gameObject.transform.right;
         rb.AddForce(throwVector * throwStrength, ForceMode.Impulse);

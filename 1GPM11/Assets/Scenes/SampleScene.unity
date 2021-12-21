@@ -357,6 +357,7 @@ GameObject:
   - component: {fileID: 620753055}
   - component: {fileID: 620753059}
   - component: {fileID: 620753056}
+  - component: {fileID: 620753057}
   m_Layer: 6
   m_Name: Needle
   m_TagString: Untagged
@@ -394,6 +395,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   needleState: 0
   needleTip: {fileID: 437382139}
+--- !u!114 &620753057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 620753054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50f0525b277124904b908e3955768f02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  threadPool:
+  - {fileID: 1646902997}
 --- !u!54 &620753059
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1226,6 +1241,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00a8768829f8a4c8183277f6250d1c42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  segmentsNumber: 15
+  width: 0.5
+  iterations: 30
+  gravity: -1.5
+  startTransform: {fileID: 756177404}
+  endPosition: {x: 0, y: 0, z: 0}
 --- !u!4 &1646902998
 Transform:
   m_ObjectHideFlags: 0
