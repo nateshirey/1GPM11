@@ -9,11 +9,15 @@ public class NeedleCollision : MonoBehaviour
     private Rigidbody rb;
     public NeedleState needleState;
     public Transform needleTip;
+    public Transform eyeHole;
 
     private ThreadController threadController;
 
     private Vector3 anchorPosition;
     private Vector3 sewPosition = Vector3.zero;
+    private float sewSpeed = 5f;
+
+    bool firstThread;
 
     private List<SewableEntity> hitEntities = new List<SewableEntity>();
 
@@ -27,16 +31,21 @@ public class NeedleCollision : MonoBehaviour
         {
             threadController = tController;
         }
+
+        firstThread = true;
     }
 
-    public void ThrowNeedle(float throwStrength, Vector3 anchorPos)
+    public void ThrowNeedle(float throwStrength, Vector3 anchorPos, float newSewSpeed)
     {
         needleState = NeedleState.Thrown;
         rb.isKinematic = false;
 
-        if(threadController != null)
+        sewSpeed = newSewSpeed;
+
+        if(firstThread && threadController != null)
         {
-            threadController.SetUpThread(needleTip.transform, anchorPos);
+            firstThread = false;
+            threadController.DispatchThread(eyeHole, anchorPos);
         }
 
         Vector3 throwVector = rb.gameObject.transform.right;
@@ -50,6 +59,11 @@ public class NeedleCollision : MonoBehaviour
         if(needleState == NeedleState.HitWall)
         {
             SewEntities();
+            if(threadController != null)
+            {
+                threadController.AnchorThread(needleTip.position);
+                threadController.DispatchThread(eyeHole, needleTip.position);
+            }
         }
         needleState = NeedleState.Returning;
     }
@@ -89,7 +103,7 @@ public class NeedleCollision : MonoBehaviour
     {
         foreach (SewableEntity e in hitEntities)
         {
-            e.Sew(sewPosition);
+            e.Sew(sewPosition, sewSpeed);
         }
 
         hitEntities.Clear();

@@ -12,11 +12,11 @@ public class SewableEntity : MonoBehaviour
         rb = this.GetComponent<Rigidbody>();
     }
 
-    public void Sew(Vector3 SewPosition)
+    public void Sew(Vector3 SewPosition, float sewSpeed)
     {
         anchored = true;
         rb.useGravity = false;
-        StartCoroutine(SewCoroutine(SewPosition));
+        StartCoroutine(SewCoroutine(SewPosition, sewSpeed));
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -29,13 +29,13 @@ public class SewableEntity : MonoBehaviour
         }
     }
 
-    private IEnumerator SewCoroutine(Vector3 SewPosition)
+    private IEnumerator SewCoroutine(Vector3 SewPosition, float speed)
     {
         while(this.transform.position != SewPosition)
         {
             Vector3 nextPosition = Vector3.MoveTowards(transform.position,
                                                        SewPosition,
-                                                       Time.deltaTime * 5f);
+                                                       Time.deltaTime * speed);
 
 
             transform.position = nextPosition;

@@ -12,13 +12,21 @@ public class ThreadController : MonoBehaviour
         threadIndex = 0;
     }
 
-    public void SetUpThread(Transform startTrans, Vector3 endTrans)
+    public void DispatchThread(Transform startTrans, Vector3 endTrans)
     {
-        if(threadIndex > threadPool.Count - 1)
+        threadIndex++;
+
+        if (threadIndex > threadPool.Count - 1)
         {
             threadIndex = 0;
         }
 
+        threadPool[threadIndex].gameObject.SetActive(true);
         threadPool[threadIndex].SetAnchors(startTrans, endTrans);
+    }
+
+    public void AnchorThread(Vector3 position)
+    {
+        threadPool[threadIndex].AnchorFromNeedleToWall(position);
     }
 }

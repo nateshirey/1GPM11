@@ -17,7 +17,10 @@ public class Thread : MonoBehaviour
     public float gravity = -1.5f;
 
     public Transform startTransform;
+    private Vector3 startPosition;
     public Vector3 endPosition;
+    private Vector3 anchorPosition;
+    public bool anchoredToWall = false;
 
     private void Awake()
     {
@@ -36,8 +39,15 @@ public class Thread : MonoBehaviour
 
     public void SetAnchors(Transform start, Vector3 end)
     {
+        anchoredToWall = false;
         startTransform = start;
         endPosition = end;
+    }
+
+    public void AnchorFromNeedleToWall(Vector3 position)
+    {
+        anchoredToWall = true;
+        anchorPosition = position;
     }
 
     private void Update()
@@ -77,6 +87,12 @@ public class Thread : MonoBehaviour
             threadSegments[i] = currentSegment;
         }
 
+        startPosition = startTransform.position;
+        if (anchoredToWall)
+        {
+            startPosition = anchorPosition;
+        }
+
         for (int i = 0; i < iterations; i++)
         {
             ApplyConstraints();
@@ -87,7 +103,7 @@ public class Thread : MonoBehaviour
     private void ApplyConstraints()
     {
         Segment firstSegment = threadSegments[0];
-        firstSegment.posNow = startTransform.position;
+        firstSegment.posNow = startPosition;
         threadSegments[0] = firstSegment;
 
         Segment endSegment = threadSegments[threadSegments.Count - 1];
