@@ -72,7 +72,6 @@ public class NeedleCollision : MonoBehaviour
     {
         if(needleState == NeedleState.Thrown)
         {
-            Debug.Log(other.name);
             if (other.gameObject.CompareTag("SewableWall"))
             {
                 sewPosition = other.ClosestPointOnBounds(needleTip.position);

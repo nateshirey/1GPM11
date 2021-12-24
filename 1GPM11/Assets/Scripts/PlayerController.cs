@@ -28,6 +28,9 @@ public class PlayerController : MonoBehaviour
 
     public float inputValue;
 
+    public string PlayerCollideLayer;
+    public string NoCollisionLayer;
+
     public void OnMove(InputValue value)
     {
         inputValue = value.Get<float>();
@@ -40,6 +43,18 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(jumpForce * Vector3.up, ForceMode.Impulse);
         }
     }
+
+    //public void OnDropThrough(InputValue value)
+    //{
+    //    if (value.isPressed)
+    //    {
+    //        this.gameObject.layer = LayerMask.NameToLayer(NoCollisionLayer);
+    //    }
+    //    else
+    //    {
+    //        this.gameObject.layer = LayerMask.NameToLayer(PlayerCollideLayer);
+    //    }
+    //}
 
     private void Awake()
     {

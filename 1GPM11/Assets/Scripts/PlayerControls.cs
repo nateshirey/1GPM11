@@ -46,6 +46,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
+                    ""name"": ""DropThrough"",
+                    ""type"": ""Value"",
+                    ""id"": ""3728078c-55ee-4e53-93be-412a6fd4db46"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
                     ""name"": ""Pullback"",
                     ""type"": ""Value"",
                     ""id"": ""15b4f0bf-49d1-40e9-aad2-d6c7e2e547a9"",
@@ -181,6 +190,28 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9cb98363-0118-44a1-8cb8-368cef1bbd36"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""09b235a8-bf52-4ee0-9b0a-92aa3c8ab345"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DropThrough"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -219,6 +250,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_PlayerActions = asset.FindActionMap("PlayerActions", throwIfNotFound: true);
         m_PlayerActions_Move = m_PlayerActions.FindAction("Move", throwIfNotFound: true);
         m_PlayerActions_Jump = m_PlayerActions.FindAction("Jump", throwIfNotFound: true);
+        m_PlayerActions_DropThrough = m_PlayerActions.FindAction("DropThrough", throwIfNotFound: true);
         m_PlayerActions_Pullback = m_PlayerActions.FindAction("Pullback", throwIfNotFound: true);
         m_PlayerActions_MousePosition = m_PlayerActions.FindAction("MousePosition", throwIfNotFound: true);
         m_PlayerActions_MouseClick = m_PlayerActions.FindAction("MouseClick", throwIfNotFound: true);
@@ -284,6 +316,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private IPlayerActionsActions m_PlayerActionsActionsCallbackInterface;
     private readonly InputAction m_PlayerActions_Move;
     private readonly InputAction m_PlayerActions_Jump;
+    private readonly InputAction m_PlayerActions_DropThrough;
     private readonly InputAction m_PlayerActions_Pullback;
     private readonly InputAction m_PlayerActions_MousePosition;
     private readonly InputAction m_PlayerActions_MouseClick;
@@ -294,6 +327,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public PlayerActionsActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_PlayerActions_Move;
         public InputAction @Jump => m_Wrapper.m_PlayerActions_Jump;
+        public InputAction @DropThrough => m_Wrapper.m_PlayerActions_DropThrough;
         public InputAction @Pullback => m_Wrapper.m_PlayerActions_Pullback;
         public InputAction @MousePosition => m_Wrapper.m_PlayerActions_MousePosition;
         public InputAction @MouseClick => m_Wrapper.m_PlayerActions_MouseClick;
@@ -313,6 +347,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Jump.started -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnJump;
+                @DropThrough.started -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnDropThrough;
+                @DropThrough.performed -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnDropThrough;
+                @DropThrough.canceled -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnDropThrough;
                 @Pullback.started -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnPullback;
                 @Pullback.performed -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnPullback;
                 @Pullback.canceled -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnPullback;
@@ -335,6 +372,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
+                @DropThrough.started += instance.OnDropThrough;
+                @DropThrough.performed += instance.OnDropThrough;
+                @DropThrough.canceled += instance.OnDropThrough;
                 @Pullback.started += instance.OnPullback;
                 @Pullback.performed += instance.OnPullback;
                 @Pullback.canceled += instance.OnPullback;
@@ -373,6 +413,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnDropThrough(InputAction.CallbackContext context);
         void OnPullback(InputAction.CallbackContext context);
         void OnMousePosition(InputAction.CallbackContext context);
         void OnMouseClick(InputAction.CallbackContext context);

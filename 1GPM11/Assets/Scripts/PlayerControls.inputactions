@@ -24,6 +24,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "DropThrough",
+                    "type": "Value",
+                    "id": "3728078c-55ee-4e53-93be-412a6fd4db46",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Pullback",
                     "type": "Value",
                     "id": "15b4f0bf-49d1-40e9-aad2-d6c7e2e547a9",
@@ -157,6 +166,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9cb98363-0118-44a1-8cb8-368cef1bbd36",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "09b235a8-bf52-4ee0-9b0a-92aa3c8ab345",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DropThrough",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -22,6 +22,10 @@ public class Thread : MonoBehaviour
     private Vector3 anchorPosition;
     public bool anchoredToWall = false;
 
+    public LayerMask collisionMask;
+
+    public BoxCollider boxCollider;
+
     private void Awake()
     {
         lineRenderer = this.GetComponent<LineRenderer>();
@@ -34,6 +38,11 @@ public class Thread : MonoBehaviour
         {
             threadSegments.Add(new Segment(startPoint));
             startPoint.y -= segmentLength;
+        }
+
+        if(boxCollider == null)
+        {
+            boxCollider = GetComponentInChildren<BoxCollider>();
         }
     }
 
@@ -98,6 +107,19 @@ public class Thread : MonoBehaviour
             ApplyConstraints();
         }
 
+
+        bool collided = false;
+        for (int i = 0; i < segmentsNumber - 1; i++)
+        {
+            if (collided)
+            {
+                break;
+            }
+            else
+            {
+                collided = CheckCollisions(i);
+            }
+        }
     }
 
     private void ApplyConstraints()
@@ -139,6 +161,54 @@ public class Thread : MonoBehaviour
                 threadSegments[i + 1] = nextSegment;
             }
         }
+    }
+
+    private bool CheckCollisions(int startIndex)
+    {
+        Segment currentSegment = threadSegments[startIndex];
+        Segment nextSegment = threadSegments[startIndex + 1];
+
+        Collider[] collisions = Physics.OverlapCapsule(currentSegment.posNow, nextSegment.posNow, width, collisionMask);
+        if (collisions.Length > 0)
+        {
+            Rigidbody collidedBody = collisions[0].attachedRigidbody;
+            float footHeight = collisions[0].bounds.min.y;
+
+            Vector3 tangent = (currentSegment.posNow - nextSegment.posNow).normalized;
+            Vector3 normal = Vector3.Cross(tangent, Vector3.forward);
+            normal.Normalize();
+
+
+            Vector3 colliderPos = collidedBody.position;
+            float dist = Mathf.Abs(currentSegment.posNow.x - nextSegment.posNow.x);
+            float t = (currentSegment.posNow.x - colliderPos.x) / dist;
+            colliderPos.y = Mathf.Lerp(nextSegment.posNow.y, currentSegment.posNow.y, t) - ( width);
+            //colliderPos += normal;
+
+            if (anchoredToWall && footHeight >= colliderPos.y)
+            {
+                SetCollisionActive(true);
+            }
+
+            else
+            {
+                SetCollisionActive(false);
+            }
+
+            Quaternion rotation = Quaternion.LookRotation(tangent, normal);
+
+            boxCollider.transform.position = colliderPos;
+            boxCollider.transform.rotation = rotation;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private void SetCollisionActive(bool active)
+    {
+        boxCollider.gameObject.SetActive(active);
     }
 
     public struct Segment
