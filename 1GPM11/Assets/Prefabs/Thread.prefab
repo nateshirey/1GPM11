@@ -45,9 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00a8768829f8a4c8183277f6250d1c42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  segmentsNumber: 15
+  segmentLength: 0.5
+  segmentsNumber: 20
   width: 0.5
-  iterations: 30
+  iterations: 50
   gravity: -1.5
   startTransform: {fileID: 0}
   endPosition: {x: 0, y: 0, z: 0}
@@ -55,7 +56,8 @@ MonoBehaviour:
   collisionMask:
     serializedVersion: 2
     m_Bits: 8
-  boxCollider: {fileID: 6166880639293497876}
+  boxCollider: {fileID: 6819223723995354009}
+  offsetAmount: 0
 --- !u!120 &1191228858072604368
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -164,6 +166,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5514846842298214694}
   - component: {fileID: 6166880639293497876}
+  - component: {fileID: 6819223723995354009}
   m_Layer: 7
   m_Name: Collider
   m_TagString: Untagged
@@ -194,7 +197,21 @@ BoxCollider:
   m_GameObject: {fileID: 6714275956321420410}
   m_Material: {fileID: 13400000, guid: 5e6f481c0f77842ed904dfc6a3639d0b, type: 2}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 2, y: 0.4, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!136 &6819223723995354009
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6714275956321420410}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.1
+  m_Height: 2
+  m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}

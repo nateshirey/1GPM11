@@ -7,7 +7,8 @@ public class Thread : MonoBehaviour
     private LineRenderer lineRenderer;
 
     private List<Segment> threadSegments = new List<Segment>();
-    private float segmentLength = 0.25f;
+    [Range(0.2f, 5)]
+    public float segmentLength = 0.25f;
     public int segmentsNumber = 15;
     [Range(0.2f, 1f)]
     public float width = 0.5f;
@@ -24,7 +25,8 @@ public class Thread : MonoBehaviour
 
     public LayerMask collisionMask;
 
-    public BoxCollider boxCollider;
+    public Collider boxCollider;
+    public float offsetAmount;
 
     private void Awake()
     {
@@ -102,13 +104,8 @@ public class Thread : MonoBehaviour
             startPosition = anchorPosition;
         }
 
-        for (int i = 0; i < iterations; i++)
-        {
-            ApplyConstraints();
-        }
-
-
         bool collided = false;
+        SetCollisionActive(false);
         for (int i = 0; i < segmentsNumber - 1; i++)
         {
             if (collided)
@@ -120,6 +117,12 @@ public class Thread : MonoBehaviour
                 collided = CheckCollisions(i);
             }
         }
+
+        for (int i = 0; i < iterations; i++)
+        {
+            ApplyConstraints();
+        }
+
     }
 
     private void ApplyConstraints()
@@ -171,34 +174,46 @@ public class Thread : MonoBehaviour
         Collider[] collisions = Physics.OverlapCapsule(currentSegment.posNow, nextSegment.posNow, width, collisionMask);
         if (collisions.Length > 0)
         {
+
             Rigidbody collidedBody = collisions[0].attachedRigidbody;
             float footHeight = collisions[0].bounds.min.y;
 
-            Vector3 tangent = (currentSegment.posNow - nextSegment.posNow).normalized;
-            Vector3 normal = Vector3.Cross(tangent, Vector3.forward);
-            normal.Normalize();
-
+            Vector3 tangent = threadSegments[0].posNow - threadSegments[threadSegments.Count - 1].posNow;
 
             Vector3 colliderPos = collidedBody.position;
-            float dist = Mathf.Abs(currentSegment.posNow.x - nextSegment.posNow.x);
-            float t = (currentSegment.posNow.x - colliderPos.x) / dist;
-            colliderPos.y = Mathf.Lerp(nextSegment.posNow.y, currentSegment.posNow.y, t) - ( width);
-            //colliderPos += normal;
+            Vector3 endPos = threadSegments[threadSegments.Count - 1].posNow;
+            Vector3 relativePos = collidedBody.position - endPos;
+            Vector3 p = Vector3.Project(relativePos, tangent);
+            p.y += endPos.y;
+            colliderPos.y = p.y;
+
+            tangent.Normalize();
+            Vector3 normal = Vector3.Cross(tangent, Vector3.forward);
+            normal.Normalize();
+            Quaternion rotation = Quaternion.LookRotation(tangent, normal);
+
+            float offset = Mathf.Pow(Mathf.Abs(Vector3.Dot(tangent, Vector3.up)), 3);
+            colliderPos.y -= offset * offsetAmount;
+
+            boxCollider.transform.SetPositionAndRotation(colliderPos, rotation);
 
             if (anchoredToWall && footHeight >= colliderPos.y)
             {
                 SetCollisionActive(true);
+
+                float d = Vector3.Distance(colliderPos, nextSegment.posNow);
+                float ratio = d / segmentLength;
+                Vector3 dir = (collidedBody.transform.position - colliderPos).normalized;
+                nextSegment.posNow += (Vector2)(dir * gravity * Time.fixedDeltaTime * 20 * ratio);
+                threadSegments[startIndex + 1] = nextSegment;
+                currentSegment.posNow += (Vector2)(dir * gravity * Time.fixedDeltaTime * 20 * (1 - ratio));
+                threadSegments[startIndex] = currentSegment;
             }
 
             else
             {
                 SetCollisionActive(false);
             }
-
-            Quaternion rotation = Quaternion.LookRotation(tangent, normal);
-
-            boxCollider.transform.position = colliderPos;
-            boxCollider.transform.rotation = rotation;
 
             return true;
         }
@@ -222,5 +237,4 @@ public class Thread : MonoBehaviour
             this.posOld = pos;
         }
     }
-
 }
