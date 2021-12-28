@@ -89,6 +89,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Cut"",
+                    ""type"": ""Value"",
+                    ""id"": ""c249903d-e4bc-4e03-b698-1f3233751db8"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -208,8 +217,19 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/downArrow"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard"",
                     ""action"": ""DropThrough"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c340b0a3-aec1-4985-8d46-f5d1c209b4af"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cut"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -255,6 +275,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_PlayerActions_MousePosition = m_PlayerActions.FindAction("MousePosition", throwIfNotFound: true);
         m_PlayerActions_MouseClick = m_PlayerActions.FindAction("MouseClick", throwIfNotFound: true);
         m_PlayerActions_Retrieve = m_PlayerActions.FindAction("Retrieve", throwIfNotFound: true);
+        m_PlayerActions_Cut = m_PlayerActions.FindAction("Cut", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -321,6 +342,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerActions_MousePosition;
     private readonly InputAction m_PlayerActions_MouseClick;
     private readonly InputAction m_PlayerActions_Retrieve;
+    private readonly InputAction m_PlayerActions_Cut;
     public struct PlayerActionsActions
     {
         private @PlayerControls m_Wrapper;
@@ -332,6 +354,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @MousePosition => m_Wrapper.m_PlayerActions_MousePosition;
         public InputAction @MouseClick => m_Wrapper.m_PlayerActions_MouseClick;
         public InputAction @Retrieve => m_Wrapper.m_PlayerActions_Retrieve;
+        public InputAction @Cut => m_Wrapper.m_PlayerActions_Cut;
         public InputActionMap Get() { return m_Wrapper.m_PlayerActions; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -362,6 +385,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Retrieve.started -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnRetrieve;
                 @Retrieve.performed -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnRetrieve;
                 @Retrieve.canceled -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnRetrieve;
+                @Cut.started -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnCut;
+                @Cut.performed -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnCut;
+                @Cut.canceled -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnCut;
             }
             m_Wrapper.m_PlayerActionsActionsCallbackInterface = instance;
             if (instance != null)
@@ -387,6 +413,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Retrieve.started += instance.OnRetrieve;
                 @Retrieve.performed += instance.OnRetrieve;
                 @Retrieve.canceled += instance.OnRetrieve;
+                @Cut.started += instance.OnCut;
+                @Cut.performed += instance.OnCut;
+                @Cut.canceled += instance.OnCut;
             }
         }
     }
@@ -418,5 +447,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnMousePosition(InputAction.CallbackContext context);
         void OnMouseClick(InputAction.CallbackContext context);
         void OnRetrieve(InputAction.CallbackContext context);
+        void OnCut(InputAction.CallbackContext context);
     }
 }

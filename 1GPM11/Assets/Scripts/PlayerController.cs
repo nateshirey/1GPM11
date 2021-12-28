@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Rigidbody rb;
     public Transform groundTransform;
+    public GameEvent dropThroughEvent;
+    public GameEvent cutEvent;
 
     [Header("Player Movement Values")]
     [Range(5, 50)]
@@ -28,9 +30,6 @@ public class PlayerController : MonoBehaviour
 
     public float inputValue;
 
-    public string PlayerCollideLayer;
-    public string NoCollisionLayer;
-
     public void OnMove(InputValue value)
     {
         inputValue = value.Get<float>();
@@ -44,17 +43,21 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    //public void OnDropThrough(InputValue value)
-    //{
-    //    if (value.isPressed)
-    //    {
-    //        this.gameObject.layer = LayerMask.NameToLayer(NoCollisionLayer);
-    //    }
-    //    else
-    //    {
-    //        this.gameObject.layer = LayerMask.NameToLayer(PlayerCollideLayer);
-    //    }
-    //}
+    public void OnDropThrough(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            dropThroughEvent.Raise();
+        }
+    }
+
+    public void OnCut(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            cutEvent.Raise();
+        }
+    }
 
     private void Awake()
     {

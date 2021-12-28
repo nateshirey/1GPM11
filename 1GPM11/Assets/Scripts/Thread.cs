@@ -5,8 +5,12 @@ using UnityEngine;
 public class Thread : MonoBehaviour
 {
     private LineRenderer lineRenderer;
+    [SerializeField]
+    private LineRenderer secondLineRenderer;
 
     private List<Segment> threadSegments = new List<Segment>();
+
+    [Header("User Parameters")]
     [Range(0.2f, 5)]
     public float segmentLength = 0.25f;
     public int segmentsNumber = 15;
@@ -16,23 +20,31 @@ public class Thread : MonoBehaviour
     public int iterations = 20;
     [Range(-1.5f, -10f)]
     public float gravity = -1.5f;
+    public float offsetAmount;
+    public LayerMask collisionMask;
+    public Collider boxCollider;
+    [Range(0f, 5f)]
+    public float cutResetTime = 3f;
 
+    [Header("Debug No Touch")]
     public Transform startTransform;
     private Vector3 startPosition;
     public Vector3 endPosition;
     private Vector3 anchorPosition;
     public bool anchoredToWall = false;
-
-    public LayerMask collisionMask;
-
-    public Collider boxCollider;
-    public float offsetAmount;
+    private bool collided;
+    private bool cut = false;
+    private int collidedSegmentIndex;
+    private int cutSegmentIndex;
 
     private void Awake()
     {
         lineRenderer = this.GetComponent<LineRenderer>();
         lineRenderer.endWidth = width;
         lineRenderer.startWidth = width;
+
+        secondLineRenderer.endWidth = width;
+        secondLineRenderer.startWidth = width;
 
         Vector3 startPoint = startTransform.position;
 
@@ -74,8 +86,30 @@ public class Thread : MonoBehaviour
             positions[i] = threadSegments[i].posNow;
         }
 
-        lineRenderer.positionCount = positions.Length;
-        lineRenderer.SetPositions(positions);
+        if (cut)
+        {
+            Vector3[] line1Points = new Vector3[cutSegmentIndex];
+            for (int i = 0; i < cutSegmentIndex; i++)
+            {
+                line1Points[i] = positions[i];
+            }
+            lineRenderer.positionCount = line1Points.Length;
+            lineRenderer.SetPositions(line1Points);
+
+            Vector3[] line2Points = new Vector3[threadSegments.Count - 1 - cutSegmentIndex];
+            for (int i = 0; i < line2Points.Length; i++)
+            {
+                line2Points[i] = positions[positions.Length - 1 - i];
+            }
+            secondLineRenderer.positionCount = line2Points.Length;
+            secondLineRenderer.SetPositions(line2Points);
+        }
+
+        else
+        {
+            lineRenderer.positionCount = positions.Length;
+            lineRenderer.SetPositions(positions);
+        }
     }
 
     private void FixedUpdate()
@@ -99,30 +133,91 @@ public class Thread : MonoBehaviour
         }
 
         startPosition = startTransform.position;
+
+        //if the thread is anchored to the wall and another point we can
+        //now collide with it and cut it. The player should not be able
+        //to do this otherwise.
         if (anchoredToWall)
         {
             startPosition = anchorPosition;
-        }
 
-        bool collided = false;
-        SetCollisionActive(false);
-        for (int i = 0; i < segmentsNumber - 1; i++)
-        {
-            if (collided)
+            collided = false;
+            SetCollisionActive(false);
+
+            if (!cut)
             {
-                break;
+                for (int i = 0; i < segmentsNumber - 1; i++)
+                {
+                    if (collided)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        collided = CheckCollisions(i);
+                        collidedSegmentIndex = i;
+                    }
+                }
+
+                if (boxCollider.isTrigger && !collided)
+                {
+                    boxCollider.isTrigger = false;
+                }
+
+                for (int i = 0; i < iterations; i++)
+                {
+                    ApplyConstraints();
+                }
             }
+
             else
             {
-                collided = CheckCollisions(i);
+                for (int i = 0; i < iterations; i++)
+                {
+                    ApplyConstraintsCut();
+                }
             }
         }
 
-        for (int i = 0; i < iterations; i++)
+        else
         {
-            ApplyConstraints();
-        }
+            SetCollisionActive(false);
 
+            for (int i = 0; i < iterations; i++)
+            {
+                ApplyConstraints();
+            }
+        }
+    }
+
+    private void Constrain(int i)
+    {
+        Segment currentSegment = threadSegments[i];
+        Segment nextSegment = threadSegments[i + 1];
+
+        Vector2 moveDirection = currentSegment.posNow - nextSegment.posNow;
+        float dist = moveDirection.magnitude;
+        float sign = Mathf.Sign(dist - segmentLength);
+
+        moveDirection *= sign;
+        moveDirection.Normalize();
+
+        //error is the difference in the current segment distance and the desired distance
+        float error = Mathf.Abs(dist - segmentLength);
+
+        Vector2 moveAmount = moveDirection * error;
+        if (i > 0)
+        {
+            currentSegment.posNow -= moveAmount * 0.5f;
+            threadSegments[i] = currentSegment;
+            nextSegment.posNow += moveAmount * 0.5f;
+            threadSegments[i + 1] = nextSegment;
+        }
+        else
+        {
+            nextSegment.posNow += moveAmount;
+            threadSegments[i + 1] = nextSegment;
+        }
     }
 
     private void ApplyConstraints()
@@ -137,32 +232,29 @@ public class Thread : MonoBehaviour
 
         for (int i = 0; i < segmentsNumber - 1; i++)
         {
-            Segment currentSegment = threadSegments[i];
-            Segment nextSegment = threadSegments[i + 1];
+            Constrain(i);
+        }
 
-            Vector2 moveDirection = currentSegment.posNow - nextSegment.posNow;
-            float dist = moveDirection.magnitude;
-            float sign = Mathf.Sign(dist - segmentLength);
+    }
 
-            moveDirection *= sign;
-            moveDirection.Normalize();
+    private void ApplyConstraintsCut()
+    {
+        Segment firstSegment = threadSegments[0];
+        firstSegment.posNow = startPosition;
+        threadSegments[0] = firstSegment;
 
-            //error is the difference in the current segment distance and the desired distance
-            float error = Mathf.Abs(dist - segmentLength);
+        Segment endSegment = threadSegments[threadSegments.Count - 1];
+        endSegment.posNow = endPosition;
+        threadSegments[threadSegments.Count - 1] = endSegment;
 
-            Vector2 moveAmount = moveDirection * error;
-            if(i > 0)
-            {
-                currentSegment.posNow -= moveAmount * 0.5f;
-                threadSegments[i] = currentSegment;
-                nextSegment.posNow += moveAmount * 0.5f;
-                threadSegments[i + 1] = nextSegment;
-            }
-            else
-            {
-                nextSegment.posNow += moveAmount;
-                threadSegments[i + 1] = nextSegment;
-            }
+        for (int i = 0; i < cutSegmentIndex - 1; i++)
+        {
+            Constrain(i);
+        }
+
+        for (int i = threadSegments.Count - 2; i > cutSegmentIndex; i--)
+        {
+            Constrain(i);
         }
     }
 
@@ -174,7 +266,6 @@ public class Thread : MonoBehaviour
         Collider[] collisions = Physics.OverlapCapsule(currentSegment.posNow, nextSegment.posNow, width, collisionMask);
         if (collisions.Length > 0)
         {
-
             Rigidbody collidedBody = collisions[0].attachedRigidbody;
             float footHeight = collisions[0].bounds.min.y;
 
@@ -224,6 +315,44 @@ public class Thread : MonoBehaviour
     private void SetCollisionActive(bool active)
     {
         boxCollider.gameObject.SetActive(active);
+    }
+
+    public void DropThrough()
+    {
+        boxCollider.isTrigger = true;
+    }
+
+    public void CutThread()
+    {
+        if (collided && anchoredToWall && !cut)
+        {
+            cutSegmentIndex = collidedSegmentIndex;
+            cut = true;
+            secondLineRenderer.gameObject.SetActive(true);
+            StartCoroutine(CutResetCoroutine());
+        }
+    }
+
+    private IEnumerator CutResetCoroutine()
+    {
+        MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
+        float alpha = 1;
+        float timer = 0f;
+        while(timer < cutResetTime)
+        {
+            timer += Time.deltaTime;
+            alpha = (cutResetTime - timer) / cutResetTime;
+            Color newColor = propertyBlock.GetColor("_Color");
+            newColor.a = alpha;
+            propertyBlock.SetColor("_Color", newColor);
+            lineRenderer.SetPropertyBlock(propertyBlock);
+            secondLineRenderer.SetPropertyBlock(propertyBlock);
+            yield return null;
+        }
+        cut = false;
+
+        secondLineRenderer.gameObject.SetActive(false);
+        this.gameObject.SetActive(false);
     }
 
     public struct Segment
