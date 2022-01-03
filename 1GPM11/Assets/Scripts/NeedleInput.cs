@@ -19,6 +19,7 @@ public class NeedleInput : MonoBehaviour
     public float maxPullbackMagnitude = 1f;
     [Range(0.1f, 0.5f)]
     public float mouseNormalizeRadius = 0.2f;
+    public Vector3 heldNeedlePosition;
 
 
     private Vector2 inputValue;
@@ -132,7 +133,7 @@ public class NeedleInput : MonoBehaviour
 
     private void PositionNeedleAtPlayer()
     {
-        Vector3 position = this.transform.position;
+        Vector3 position = this.transform.position + heldNeedlePosition;
         if (pulledBack)
         {
             pullbackAmount = inputValue.magnitude;
