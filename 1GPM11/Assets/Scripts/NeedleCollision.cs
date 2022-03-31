@@ -4,6 +4,7 @@ using UnityEngine;
 
 public enum NeedleState { Held, Thrown, HitWall, Returning }
 
+//This class controls the needle as it interacts with physics and the needle state
 public class NeedleCollision : MonoBehaviour
 {
     private Rigidbody rb;
@@ -13,7 +14,6 @@ public class NeedleCollision : MonoBehaviour
 
     private ThreadController threadController;
 
-    private Vector3 anchorPosition;
     private Vector3 sewPosition = Vector3.zero;
     private float sewSpeed = 5f;
 
@@ -35,27 +35,38 @@ public class NeedleCollision : MonoBehaviour
         firstThread = true;
     }
 
+    //This method is called from the NeedleInput script.
+    // 1) change the state
+    // 2) start the thread controller to follow the needle
+    // 3) apply force
     public void ThrowNeedle(float throwStrength, Vector3 anchorPos, float newSewSpeed)
     {
+        // 1)
         needleState = NeedleState.Thrown;
         rb.isKinematic = false;
 
         sewSpeed = newSewSpeed;
 
+        //special behaviour if we have not thrown the needle yet
+        // 2)
         if(firstThread && threadController != null)
         {
             firstThread = false;
             threadController.DispatchThread(eyeHole, anchorPos);
         }
-
+        // 3)
         Vector3 throwVector = rb.gameObject.transform.right;
         rb.AddForce(throwVector * throwStrength, ForceMode.Impulse);
-        Debug.Log("Throw");
     }
 
+    // 1) make the needle stop responding to physics
+    // 2) sew enemies to the wall and setup a new thread
+    // 3) set new state
     public void StartReturn()
     {
+        // 1)
         StopNeedle();
+        // 2)
         if(needleState == NeedleState.HitWall)
         {
             SewEntities();
@@ -65,29 +76,29 @@ public class NeedleCollision : MonoBehaviour
                 threadController.DispatchThread(eyeHole, needleTip.position);
             }
         }
+        // 3)
         needleState = NeedleState.Returning;
     }
 
+    // if the needle touches a trigger that is sewable
     private void OnTriggerEnter(Collider other)
     {
         if(needleState == NeedleState.Thrown)
         {
+            //if its a wall mark the hit point for the thread
             if (other.gameObject.CompareTag("SewableWall"))
             {
                 sewPosition = other.ClosestPointOnBounds(needleTip.position);
                 needleState = NeedleState.HitWall;
                 StopNeedle();
             }
+            // if its an enemy add them to the list of sewn enemies
             else if (other.gameObject.CompareTag("SewableEntity"))
             {
                 if(other.TryGetComponent<SewableEntity>(out SewableEntity entity))
                 {
                     hitEntities.Add(entity);
                 }
-            }
-            else
-            {
-                //i think stuff here happens on non sewable walls only ? 
             }
         }
     }
@@ -98,6 +109,7 @@ public class NeedleCollision : MonoBehaviour
         rb.velocity = Vector3.zero;
     }
 
+    //when we want to pull the needle back we call this to attach the entity to a sewable wall
     private void SewEntities()
     {
         foreach (SewableEntity e in hitEntities)

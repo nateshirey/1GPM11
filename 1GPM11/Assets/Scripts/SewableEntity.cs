@@ -12,6 +12,8 @@ public class SewableEntity : MonoBehaviour
         rb = this.GetComponent<Rigidbody>();
     }
 
+    //this is called from needle collision after a needle has collided with this object
+    //we need to remove the rigidbody from the simulation and start moving it
     public void Sew(Vector3 SewPosition, float sewSpeed)
     {
         anchored = true;
@@ -28,7 +30,9 @@ public class SewableEntity : MonoBehaviour
             rb.isKinematic = true;
         }
     }
-
+    //This coroutine moves the entity to the desired location,
+    //the speed is passed from the needle controller so that the entity moves
+    //at the same rate as the needle as it is pulled back to the player
     private IEnumerator SewCoroutine(Vector3 SewPosition, float speed)
     {
         while(this.transform.position != SewPosition)

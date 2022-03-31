@@ -24,12 +24,15 @@ public class PlayerController : MonoBehaviour
     [Range(0.01f, 1f)]
     public float groundCheckDistance = 0.5f;
 
+    [Header("Debug")]
+    //these are public to view the values in inspector but should go private
     public bool grounded;
 
     public float speed;
 
     public float inputValue;
 
+    //a few public methods here to read input values from the player input component into here
     public void OnMove(InputValue value)
     {
         inputValue = value.Get<float>();
@@ -73,6 +76,7 @@ public class PlayerController : MonoBehaviour
         GroundCheck();
     }
 
+    //using the input values we have, add forces to the player to move
     private void AddForces()
     {
         Vector3 inputForce = new Vector3(inputValue, 0, 0) * acceleration;
@@ -99,11 +103,8 @@ public class PlayerController : MonoBehaviour
         Ray ray = new Ray(groundTransform.position, Vector3.down);
         RaycastHit hit = new RaycastHit();
 
-        if (Physics.Raycast(ray, out hit, 1f)){
-            if(hit.distance < groundCheckDistance)
-            {
-                grounded = true;
-            }
+        if (Physics.Raycast(ray, out hit, groundCheckDistance)){
+            grounded = true;
         }
     }
 }

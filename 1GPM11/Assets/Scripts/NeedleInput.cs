@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-
+//This class controls the input on the needle
+//The behaviour of the needle as it interacts with physcics is controlled in NeedleCollision
 public class NeedleInput : MonoBehaviour
 {
     [Header("Component References")]
@@ -39,6 +40,9 @@ public class NeedleInput : MonoBehaviour
         cam = Camera.main;
         mouseNormalRatio = 1f / mouseNormalizeRadius;
     }
+
+    //The following methods are used for gathering input and transforming it into values we need
+    //Onretrieve and OnMouseClick invoke methods in the needle collision script to apply forces
 
     //only used for controller input
     public void OnPullback(InputValue value)
@@ -119,6 +123,7 @@ public class NeedleInput : MonoBehaviour
         }
     }
 
+    //use the input value to determine which angle to point the needle
     private void PointNeedle()
     {
         throwAngle = Mathf.Atan2(inputValue.y, inputValue.x);
@@ -131,6 +136,7 @@ public class NeedleInput : MonoBehaviour
         needleCollision.gameObject.transform.rotation = rotation;
     }
 
+    //Use the input value to place the needle at a position relative to the player if they are getting ready to throw it
     private void PositionNeedleAtPlayer()
     {
         Vector3 position = this.transform.position + heldNeedlePosition;
@@ -150,6 +156,7 @@ public class NeedleInput : MonoBehaviour
         needleCollision.gameObject.transform.position = position;
     }
 
+    //This returns the needle to the owner. I placed it here because it does not use physics and I wanted to orient the needle in this script 
     private void ReturnNeedle()
     {
         Transform needleTransform = needleCollision.transform;
